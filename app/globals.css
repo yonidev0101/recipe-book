@@ -1,0 +1,254 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 30% 98%;
+    --foreground: 20 40% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 40% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 40% 15%;
+    --primary: 15 80% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 50% 95%;
+    --secondary-foreground: 20 40% 15%;
+    --muted: 30 20% 90%;
+    --muted-foreground: 20 40% 40%;
+    --accent: 15 80% 96%;
+    --accent-foreground: 15 80% 40%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 30% 85%;
+    --input: 20 30% 85%;
+    --ring: 15 80% 50%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 20 40% 8%;
+    --foreground: 30 20% 90%;
+    --card: 20 40% 12%;
+    --card-foreground: 30 20% 90%;
+    --popover: 20 40% 12%;
+    --popover-foreground: 30 20% 90%;
+    --primary: 15 80% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 20 30% 15%;
+    --secondary-foreground: 30 20% 90%;
+    --muted: 20 30% 20%;
+    --muted-foreground: 30 20% 70%;
+    --accent: 15 80% 20%;
+    --accent-foreground: 15 80% 90%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 30% 25%;
+    --input: 20 30% 25%;
+    --ring: 15 80% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/50 rounded-full transition-colors;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/70;
+  }
+}
+
+@layer components {
+  .recipe-card {
+    @apply relative overflow-hidden rounded-xl border border-border/40 bg-card shadow-sm transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1;
+  }
+
+  .recipe-image {
+    @apply aspect-video relative overflow-hidden;
+  }
+
+  .recipe-image img {
+    @apply object-cover transition-transform duration-500;
+  }
+
+  .recipe-card:hover .recipe-image img {
+    @apply scale-105;
+  }
+
+  .recipe-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors;
+  }
+
+  .recipe-stats {
+    @apply flex items-center gap-1 text-sm text-muted-foreground;
+  }
+
+  .recipe-stats-icon {
+    @apply h-4 w-4 text-primary;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold relative;
+  }
+
+  .section-title::after {
+    content: "";
+    @apply absolute bottom-0 left-0 w-12 h-1 bg-primary rounded-full mt-1;
+  }
+
+  .gradient-heading {
+    @apply bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* וידוא שהכותרות קריאות גם במצב כהה */
+  .dark .gradient-heading {
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+  }
+
+  .pattern-bg {
+    @apply bg-recipe-texture bg-repeat;
+  }
+
+  .hero-section {
+    @apply relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/90 to-primary p-8 md:p-12 shadow-lg;
+  }
+
+  .hero-pattern {
+    @apply absolute inset-0 opacity-10 mix-blend-overlay bg-dotted-pattern;
+  }
+
+  .category-pill {
+    @apply rounded-full px-4 py-2 text-sm font-medium transition-colors;
+  }
+
+  .category-pill-active {
+    @apply bg-primary text-primary-foreground shadow-sm;
+  }
+
+  .category-pill-inactive {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+
+  .input-with-icon {
+    @apply relative flex items-center;
+  }
+
+  .input-with-icon input {
+    @apply pl-10 pr-4 py-2 rounded-lg border border-input bg-background;
+  }
+
+  .input-with-icon svg {
+    @apply absolute left-3 h-5 w-5 text-muted-foreground;
+  }
+
+  .recipe-detail-section {
+    @apply bg-card rounded-xl p-6 shadow-sm border border-border/40;
+  }
+
+  .recipe-step {
+    @apply flex gap-4 p-4 rounded-lg bg-accent/50 mb-4 transition-colors hover:bg-accent;
+  }
+
+  .recipe-step-number {
+    @apply flex-none flex items-center justify-center bg-primary text-primary-foreground w-8 h-8 rounded-full font-bold;
+  }
+
+  .recipe-ingredient {
+    @apply flex items-center gap-2 py-2 border-b border-border/30 last:border-0;
+  }
+
+  .recipe-ingredient-quantity {
+    @apply font-medium text-primary;
+  }
+
+  /* Image optimization animations */
+  .image-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .dark .image-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  }
+}
+
+@layer utilities {
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Progressive image loading */
+  .image-loading {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+  }
+
+  .image-loaded {
+    filter: blur(0);
+  }
+}
