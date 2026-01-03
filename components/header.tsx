@@ -5,12 +5,14 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Plus, UtensilsCrossed, Heart, Home, Grid3X3 } from "lucide-react"
+import { Menu, Plus, UtensilsCrossed, Heart, Home, Grid3X3, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { usePathname } from "next/navigation"
+import { AiRecipeImportModal } from "@/components/ai-recipe-import/ai-recipe-import-modal"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const [aiModalOpen, setAiModalOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
 
@@ -65,7 +67,18 @@ export function Header() {
                 ))}
               </nav>
 
-              <div className="mt-8">
+              <div className="mt-8 space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full gap-1"
+                  onClick={() => {
+                    setAiModalOpen(true)
+                    setIsOpen(false)
+                  }}
+                >
+                  <Sparkles className="h-4 w-4 ml-1" />
+                  ייבוא חכם
+                </Button>
                 <Button asChild className="w-full gap-1">
                   <Link href="/recipes/new" onClick={() => setIsOpen(false)}>
                     <Plus className="h-4 w-4 ml-1" />
@@ -107,6 +120,14 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2 flex-shrink-0">
+          <Button
+            variant="outline"
+            className="gap-1 rounded-full shadow-sm hidden sm:flex"
+            onClick={() => setAiModalOpen(true)}
+          >
+            <Sparkles className="h-4 w-4 ml-1" />
+            ייבוא חכם
+          </Button>
           <Button asChild className="gap-1 rounded-full shadow-sm hidden sm:flex">
             <Link href="/recipes/new">
               <Plus className="h-4 w-4 ml-1" />
@@ -121,6 +142,7 @@ export function Header() {
           <ModeToggle />
         </div>
       </div>
+      <AiRecipeImportModal open={aiModalOpen} onOpenChange={setAiModalOpen} />
     </header>
   )
 }

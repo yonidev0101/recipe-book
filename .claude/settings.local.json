@@ -8,7 +8,9 @@
       "Bash(pnpm add:*)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(del nul)"
+      "Bash(del nul)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Hebrew recipe website with Next.js\n\n- Next.js 14+ with App Router and TypeScript\n- RTL support for Hebrew language\n- Supabase backend integration\n- Cloudinary image optimization\n- Offline support with service worker\n- shadcn/ui components with Tailwind CSS\n- Framer Motion animations\n- Fixed hydration and image optimization issues\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(gh --version:*)"
     ]
   }
 }
