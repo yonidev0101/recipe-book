@@ -3,13 +3,14 @@ import { RecipeFormRedesigned } from "@/components/recipe-form-redesigned"
 import { notFound } from "next/navigation"
 
 interface EditRecipePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EditRecipePage({ params }: EditRecipePageProps) {
-  const [recipe, categories] = await Promise.all([getRecipeById(params.id), getCategories()])
+  const { id } = await params
+  const [recipe, categories] = await Promise.all([getRecipeById(id), getCategories()])
 
   if (!recipe) {
     notFound()

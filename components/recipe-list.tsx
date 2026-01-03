@@ -44,7 +44,7 @@ export function RecipeList({ recipes }: RecipeListProps) {
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {visibleRecipes.map((recipe, index) => (
           <RecipeCard key={recipe.id} recipe={recipe} index={index} />
         ))}

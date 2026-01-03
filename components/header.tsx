@@ -46,7 +46,7 @@ export function Header() {
                 <span className="sr-only">תפריט</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[240px] sm:w-[300px]">
+            <SheetContent side="right" className="w-[220px] sm:w-[280px]">
               <div className="flex items-center gap-2 mb-8 mt-4">
                 <UtensilsCrossed className="h-6 w-6 text-primary" />
                 <span className="text-xl font-bold">ספר המתכונים שלי</span>
@@ -119,24 +119,19 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           <Button
-            variant="outline"
-            className="gap-1 rounded-full shadow-sm hidden sm:flex"
+            variant="ghost"
+            className="gap-1 rounded-full hidden md:flex"
             onClick={() => setAiModalOpen(true)}
           >
             <Sparkles className="h-4 w-4 ml-1" />
-            ייבוא חכם
+            <span className="text-sm">ייבוא חכם</span>
           </Button>
-          <Button asChild className="gap-1 rounded-full shadow-sm hidden sm:flex">
+          <Button asChild className="gap-1 rounded-full shadow-sm">
             <Link href="/recipes/new">
               <Plus className="h-4 w-4 ml-1" />
-              מתכון חדש
-            </Link>
-          </Button>
-          <Button asChild variant="ghost" size="icon" className="sm:hidden">
-            <Link href="/recipes/new">
-              <Plus className="h-5 w-5" />
+              <span className="hidden sm:inline">מתכון חדש</span>
             </Link>
           </Button>
           <ModeToggle />

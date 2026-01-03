@@ -5,13 +5,14 @@ import { RecipeDetailSkeleton } from "@/components/loading/recipe-detail-skeleto
 import { notFound } from "next/navigation"
 
 interface RecipePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 async function RecipeContent({ params }: RecipePageProps) {
-  const recipe = await getRecipeById(params.id)
+  const { id } = await params
+  const recipe = await getRecipeById(id)
 
   if (!recipe) {
     notFound()

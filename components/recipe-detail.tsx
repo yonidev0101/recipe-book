@@ -220,13 +220,13 @@ export function RecipeDetail({ recipe }: RecipeDetailProps) {
             </div>
           </div>
 
-          <motion.div className="mb-8" variants={item}>
+          <motion.div className="mb-8 relative aspect-video" variants={item}>
             <OptimizedImage
               src={recipe.image || "/placeholder.svg"}
               alt={recipe.title}
               cloudinaryType="detail"
-              aspectRatio="video"
-              className="w-full rounded-xl shadow-lg"
+              fill
+              className="rounded-xl shadow-lg object-cover"
               priority
             />
           </motion.div>

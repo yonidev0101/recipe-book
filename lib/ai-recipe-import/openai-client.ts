@@ -30,7 +30,7 @@ export async function parseRecipeText(text: string, categories: string[]): Promi
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // שימוש ב-gpt-4o-mini - זול וטוב לפענוח
+      model: "gpt-4o", // gpt-4o - מודל חזק ומדויק
       messages: [
         {
           role: "system",
@@ -41,7 +41,7 @@ export async function parseRecipeText(text: string, categories: string[]): Promi
           content: buildUserPromptForText(text, categories),
         },
       ],
-      temperature: 0.3, // נמוך יחסית להבטחת קונסיסטנטיות
+      temperature: 0.2, // נמוך מאוד להבטחת דיוק ועקביות
       response_format: { type: "json_object" }, // אכיפת JSON response
     })
 
@@ -84,7 +84,7 @@ export async function parseRecipeImage(imageUrl: string, categories: string[]): 
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // gpt-4o-mini תומך גם ב-vision
+      model: "gpt-4o", // gpt-4o - הכי טוב ל-vision + דיוק
       messages: [
         {
           role: "system",
@@ -101,15 +101,15 @@ export async function parseRecipeImage(imageUrl: string, categories: string[]): 
               type: "image_url",
               image_url: {
                 url: imageUrl,
-                detail: "high", // רזולוציה גבוהה לקריאת טקסט טובה יותר
+                detail: "high", // רזולוציה גבוהה לקריאת טקסט מדויקת
               },
             },
           ],
         },
       ],
-      temperature: 0.3,
+      temperature: 0.1, // מאוד נמוך - מקסימום דיוק, מינימום המצאות
       response_format: { type: "json_object" },
-      max_tokens: 2000, // מספיק למתכון ממוצע
+      max_tokens: 2500, // מספיק למתכון מפורט
     })
 
     const content = completion.choices[0]?.message?.content

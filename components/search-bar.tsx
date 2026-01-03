@@ -4,13 +4,16 @@ import type React from "react"
 import { useState, useTransition, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
-import { Search, X, Clock, TrendingUp } from "lucide-react"
+import { Search, X, Clock, TrendingUp, Sliders } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LoadingSpinner } from "@/components/loading/loading-spinner"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useLocalStorage } from "@/hooks/use-local-storage"
+import { AdvancedSearch } from "@/components/advanced-search"
+import { getCategories } from "@/app/actions/recipes"
+import type { Category } from "@/lib/types"
 
 interface SearchBarProps {
   defaultValue?: string
@@ -30,11 +33,18 @@ export function SearchBar({ defaultValue = "" }: SearchBarProps) {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
   const [searchHistory, setSearchHistory] = useLocalStorage<string[]>("search-history", [])
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
   const searchRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Popular searches - can be fetched from analytics
-  const popularSearches = ["עוגת שוקולד", "חומוס", "סלט", "פסטה", "עוף", "דגים", "ירקות", "קינוחים"]
+  const popularSearches = ["עוגת שוקולד", "חומוס", "סלט", "פסטה", "עוף"]
+
+  // Load categories for advanced search
+  useEffect(() => {
+    getCategories().then(setCategories)
+  }, [])
 
   // Debounced search suggestions
   useEffect(() => {
@@ -192,13 +202,24 @@ export function SearchBar({ defaultValue = "" }: SearchBarProps) {
           <Input
             ref={inputRef}
             placeholder="חפש מתכונים, מרכיבים או קטגוריות..."
-            className="pr-9 pl-20 text-base rounded-full border-input/80 shadow-sm"
+            className="pr-9 pl-28 sm:pl-36 text-base rounded-full border-input/80 shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={handleInputFocus}
             disabled={isPending}
           />
           <div className="absolute left-1 top-1/2 -translate-y-1/2 flex gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-muted-foreground hover:text-foreground"
+              onClick={() => setShowAdvancedSearch(true)}
+              title="חיפוש מתקדם"
+            >
+              <Sliders className="h-4 w-4" />
+              <span className="hidden sm:inline mr-1 text-xs">מתקדם</span>
+            </Button>
             {searchQuery && (
               <Button
                 type="button"
@@ -323,6 +344,9 @@ export function SearchBar({ defaultValue = "" }: SearchBarProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Advanced Search Modal */}
+      {showAdvancedSearch && <AdvancedSearch categories={categories} onClose={() => setShowAdvancedSearch(false)} />}
     </div>
   )
 }

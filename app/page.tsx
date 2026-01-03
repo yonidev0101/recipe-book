@@ -36,22 +36,22 @@ async function RecipesContent({ searchParams }: HomePageProps) {
       {!search && !category && <HeroSection />}
 
       {/* כותרת ותיבת חיפוש */}
-      <section className="mb-8">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">
+      <section className="mb-6" data-recipes-section>
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold">
             {search ? `תוצאות חיפוש: "${search}"` : category ? `מתכונים בקטגוריה` : "המתכונים שלי"}
           </h1>
           <SearchBar defaultValue={search} />
         </div>
 
         {/* סינון לפי קטגוריות */}
-        <div className="bg-card p-4 rounded-xl mb-8 shadow-sm border border-border/40">
+        <div className="mb-6">
           <CategoryFilter categories={categories} activeCategory={category || "all"} />
         </div>
 
         {/* מתכון מומלץ */}
         {featuredRecipe && (
-          <div className="mb-12">
+          <div className="mb-8">
             <FeaturedRecipe recipe={featuredRecipe} />
           </div>
         )}
@@ -65,13 +65,13 @@ async function RecipesContent({ searchParams }: HomePageProps) {
 
 function RecipesSkeleton() {
   return (
-    <div className="container py-8">
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+    <div className="container px-4 py-6 md:px-6 md:py-8">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-4">
         <div className="h-9 w-48 bg-muted animate-pulse rounded" />
         <div className="h-10 w-full md:w-80 bg-muted animate-pulse rounded-full" />
       </div>
 
-      <div className="bg-card p-4 rounded-xl mb-8 shadow-sm border border-border/40">
+      <div className="mb-6">
         <div className="flex space-x-2 rtl:space-x-reverse">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-8 w-20 bg-muted animate-pulse rounded-full" />
@@ -79,7 +79,7 @@ function RecipesSkeleton() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {Array.from({ length: 6 }).map((_, i) => (
           <RecipeCardSkeleton key={i} />
         ))}
@@ -90,7 +90,7 @@ function RecipesSkeleton() {
 
 export default function Home({ searchParams }: HomePageProps) {
   return (
-    <div className="container py-8">
+    <div className="container px-4 py-6 md:px-6 md:py-8">
       <Suspense fallback={<RecipesSkeleton />}>
         <RecipesContent searchParams={searchParams} />
       </Suspense>
