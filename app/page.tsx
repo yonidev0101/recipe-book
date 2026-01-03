@@ -9,14 +9,14 @@ import { RecipeCardSkeleton } from "@/components/loading/recipe-card-skeleton"
 import { SearchResults } from "@/components/search-results"
 
 interface HomePageProps {
-  searchParams: {
+  searchParams: Promise<{
     category?: string
     search?: string
-  }
+  }>
 }
 
 async function RecipesContent({ searchParams }: HomePageProps) {
-  const { category, search } = searchParams
+  const { category, search } = await searchParams
 
   // קבלת כל הקטגוריות
   const categories = await getCategories()

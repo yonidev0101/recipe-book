@@ -1,6 +1,7 @@
 "use server"
 
 import { v2 as cloudinary } from "cloudinary"
+import https from "https"
 
 // קונפיגורציה של Cloudinary - נעשית בכל קריאה לפונקציה כדי לוודא שמשתני הסביבה נטענים
 function configureCloudinary() {
@@ -17,11 +18,19 @@ function configureCloudinary() {
     throw new Error("Missing Cloudinary environment variables")
   }
 
+  // בסביבת פיתוח - התעלם מבעיות SSL
+  const isDevelopment = process.env.NODE_ENV === "development"
+
   cloudinary.config({
     cloud_name: cloudName,
     api_key: apiKey,
     api_secret: apiSecret,
     secure: true,
+    ...(isDevelopment && {
+      agent: new https.Agent({
+        rejectUnauthorized: false, // רק בסביבת פיתוח!
+      }),
+    }),
   })
 
   return cloudinary
