@@ -1,6 +1,6 @@
 "use server"
 
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, getCurrentUser } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import type { RecipeFormData } from "@/lib/types"
 import { deleteFromCloudinary } from "@/lib/cloudinary"
@@ -325,6 +325,11 @@ export async function uploadRecipeImage(formData: FormData) {
 // פעולה ליצירת מתכון חדש
 export async function createRecipe(formData: RecipeFormData) {
   const supabase = createServerClient()
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return { success: false, error: "יש להתחבר כדי ליצור מתכון" }
+  }
 
   // יצירת המתכון הבסיסי
   const { data: recipe, error: recipeError } = await supabase
@@ -337,6 +342,7 @@ export async function createRecipe(formData: RecipeFormData) {
       servings: formData.servings,
       difficulty: formData.difficulty,
       image: formData.image || null,
+      user_id: user.id,
     })
     .select()
     .single()
@@ -404,10 +410,19 @@ export async function createRecipe(formData: RecipeFormData) {
 // פעולה לעדכון מתכון קיים
 export async function updateRecipe(id: string, formData: RecipeFormData) {
   const supabase = createServerClient()
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return { success: false, error: "יש להתחבר כדי לעדכן מתכון" }
+  }
 
   try {
-    // אם יש תמונה חדשה ותמונה ישנה, מחק את התמונה הישנה
-    const { data: existingRecipe } = await supabase.from("recipes").select("image").eq("id", id).single()
+    // בדיקה שהמשתמש הוא בעל המתכון
+    const { data: existingRecipe } = await supabase.from("recipes").select("image, user_id").eq("id", id).single()
+
+    if (existingRecipe?.user_id && existingRecipe.user_id !== user.id) {
+      return { success: false, error: "אין לך הרשאה לעדכן מתכון זה" }
+    }
 
     if (existingRecipe?.image && formData.image && existingRecipe.image !== formData.image) {
       // מחיקת התמונה הישנה רק אם היא לא תמונת ברירת מחדל
@@ -514,10 +529,20 @@ export async function updateRecipe(id: string, formData: RecipeFormData) {
 // פעולה למחיקת מתכון
 export async function deleteRecipe(id: string) {
   const supabase = createServerClient()
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return { success: false, error: "יש להתחבר כדי למחוק מתכון" }
+  }
 
   try {
     // קבלת פרטי המתכון לפני המחיקה כדי למחוק את התמונה
-    const { data: recipe } = await supabase.from("recipes").select("image").eq("id", id).single()
+    const { data: recipe } = await supabase.from("recipes").select("image, user_id").eq("id", id).single()
+
+    // בדיקה שהמשתמש הוא בעל המתכון
+    if (recipe?.user_id && recipe.user_id !== user.id) {
+      return { success: false, error: "אין לך הרשאה למחוק מתכון זה" }
+    }
 
     // מחיקת התמונה אם קיימת ואינה תמונת ברירת מחדל
     if (recipe?.image && !recipe.image.includes("placeholder.svg")) {
@@ -543,6 +568,77 @@ export async function deleteRecipe(id: string) {
     console.error("Error in deleteRecipe:", error)
     return { success: false, error: "אירעה שגיאה בעת מחיקת המתכון" }
   }
+}
+
+// פעולה לקבלת המתכונים של המשתמש הנוכחי
+export async function getMyRecipes() {
+  const supabase = createServerClient()
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from("recipes")
+    .select(`
+      *,
+      categories(name),
+      ingredients(text, order_num),
+      instructions(text, order_num),
+      tips(text, order_num),
+      recipe_tags(tag_id, tags(name))
+    `)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+
+  if (error) {
+    console.error("Error fetching user recipes:", error)
+    return []
+  }
+
+  return data.map((recipe) => {
+    const ingredients = recipe.ingredients.sort((a, b) => a.order_num - b.order_num).map((i) => i.text)
+    const instructions = recipe.instructions.sort((a, b) => a.order_num - b.order_num).map((i) => i.text)
+    const tips = recipe.tips.sort((a, b) => a.order_num - b.order_num).map((i) => i.text)
+    const tags = recipe.recipe_tags.map((rt) => rt.tags.name)
+
+    return {
+      id: recipe.id,
+      title: recipe.title,
+      description: recipe.description,
+      category: recipe.categories?.name || "ללא קטגוריה",
+      categoryId: recipe.category_id,
+      tags,
+      prepTime: recipe.prep_time,
+      servings: recipe.servings,
+      difficulty: recipe.difficulty,
+      ingredients,
+      instructions,
+      tips,
+      image: recipe.image || "/placeholder.svg?height=300&width=400",
+      createdAt: recipe.created_at,
+      updatedAt: recipe.updated_at,
+    }
+  })
+}
+
+// בדיקה אם המשתמש הנוכחי הוא בעל המתכון
+export async function isRecipeOwner(recipeId: string) {
+  const supabase = createServerClient()
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return false
+  }
+
+  const { data } = await supabase
+    .from("recipes")
+    .select("user_id")
+    .eq("id", recipeId)
+    .single()
+
+  return data?.user_id === user.id
 }
 
 // פעולה לקבלת כל הקטגוריות

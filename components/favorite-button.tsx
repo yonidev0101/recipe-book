@@ -82,9 +82,9 @@ export function FavoriteButton({ recipeId }: FavoriteButtonProps) {
       size="icon"
       onClick={handleToggleFavorite}
       disabled={isLoading}
-      className={`transition-colors ${isFav ? "text-red-500 hover:text-red-600 hover:bg-red-50" : "hover:bg-accent"}`}
+      className={`transition-colors bg-background/80 backdrop-blur-sm hover:bg-background/90 ${isFav ? "text-red-500 hover:text-red-600" : ""}`}
     >
-      <Heart className={`h-4 w-4 transition-all ${isFav ? "fill-current scale-110" : ""}`} />
+      <Heart className={`h-5 w-5 transition-all ${isFav ? "fill-current scale-110" : ""}`} />
       <span className="sr-only">{isFav ? "הסר מהמועדפים" : "הוסף למועדפים"}</span>
     </Button>
   )

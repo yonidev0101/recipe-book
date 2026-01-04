@@ -31,6 +31,7 @@ export interface Database {
           servings: number
           difficulty: string
           image: string | null
+          user_id: string | null
           created_at: string
           updated_at: string
         }
@@ -43,6 +44,7 @@ export interface Database {
           servings: number
           difficulty: string
           image?: string | null
+          user_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -55,6 +57,7 @@ export interface Database {
           servings?: number
           difficulty?: string
           image?: string | null
+          user_id?: string | null
           created_at?: string
           updated_at?: string
         }

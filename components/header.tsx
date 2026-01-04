@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
+import { UserMenu } from "@/components/auth/user-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Plus, UtensilsCrossed, Heart, Home, Grid3X3, Sparkles } from "lucide-react"
+import { Menu, Plus, Heart, Home, Grid3X3, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { usePathname } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { AiRecipeImportModal } from "@/components/ai-recipe-import/ai-recipe-import-modal"
 
 export function Header() {
@@ -15,6 +18,7 @@ export function Header() {
   const [aiModalOpen, setAiModalOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+  const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,8 +52,8 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[220px] sm:w-[280px]">
               <div className="flex items-center gap-2 mb-8 mt-4">
-                <UtensilsCrossed className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">ספר המתכונים שלי</span>
+                <Image src="/logo.png" alt="לוגו" width={32} height={32} className="flex-shrink-0" />
+                <span className="text-xl font-bold">המתכונים של זלדי</span>
               </div>
               <nav className="flex flex-col gap-4">
                 {navItems.map((item) => (
@@ -67,38 +71,40 @@ export function Header() {
                 ))}
               </nav>
 
-              <div className="mt-8 space-y-2">
-                <Button
-                  variant="outline"
-                  className="w-full gap-1"
-                  onClick={() => {
-                    setAiModalOpen(true)
-                    setIsOpen(false)
-                  }}
-                >
-                  <Sparkles className="h-4 w-4 ml-1" />
-                  ייבוא חכם
-                </Button>
-                <Button asChild className="w-full gap-1">
-                  <Link href="/recipes/new" onClick={() => setIsOpen(false)}>
-                    <Plus className="h-4 w-4 ml-1" />
-                    מתכון חדש
-                  </Link>
-                </Button>
-              </div>
+              {isAuthenticated && (
+                <div className="mt-8 space-y-2">
+                  <Button
+                    variant="outline"
+                    className="w-full gap-1"
+                    onClick={() => {
+                      setAiModalOpen(true)
+                      setIsOpen(false)
+                    }}
+                  >
+                    <Sparkles className="h-4 w-4 ml-1" />
+                    ייבוא חכם
+                  </Button>
+                  <Button asChild className="w-full gap-1">
+                    <Link href="/recipes/new" onClick={() => setIsOpen(false)}>
+                      <Plus className="h-4 w-4 ml-1" />
+                      מתכון חדש
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </SheetContent>
           </Sheet>
           <Link href="/" className="flex items-center gap-2 min-w-0">
             <motion.div
-              initial={{ rotate: -10 }}
-              animate={{ rotate: 0 }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, type: "spring" }}
               className="flex-shrink-0"
             >
-              <UtensilsCrossed className="h-6 w-6 text-primary hidden md:block" />
+              <Image src="/logo.png" alt="לוגו ספר המתכונים" width={40} height={40} className="w-8 h-8 md:w-10 md:h-10" priority />
             </motion.div>
             <span className="text-lg sm:text-xl font-bold gradient-heading truncate max-w-[120px] sm:max-w-full">
-              ספר המתכונים שלי
+              המתכונים של זלדי
             </span>
           </Link>
         </div>
@@ -120,21 +126,26 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          <Button
-            variant="ghost"
-            className="gap-1 rounded-full hidden md:flex"
-            onClick={() => setAiModalOpen(true)}
-          >
-            <Sparkles className="h-4 w-4 ml-1" />
-            <span className="text-sm">ייבוא חכם</span>
-          </Button>
-          <Button asChild className="gap-1 rounded-full shadow-sm">
-            <Link href="/recipes/new">
-              <Plus className="h-4 w-4 ml-1" />
-              <span className="hidden sm:inline">מתכון חדש</span>
-            </Link>
-          </Button>
+          {isAuthenticated && (
+            <>
+              <Button
+                variant="ghost"
+                className="gap-1 rounded-full hidden md:flex"
+                onClick={() => setAiModalOpen(true)}
+              >
+                <Sparkles className="h-4 w-4 ml-1" />
+                <span className="text-sm">ייבוא חכם</span>
+              </Button>
+              <Button asChild className="gap-1 rounded-full shadow-sm">
+                <Link href="/recipes/new">
+                  <Plus className="h-4 w-4 ml-1" />
+                  <span className="hidden sm:inline">מתכון חדש</span>
+                </Link>
+              </Button>
+            </>
+          )}
           <ModeToggle />
+          <UserMenu />
         </div>
       </div>
       <AiRecipeImportModal open={aiModalOpen} onOpenChange={setAiModalOpen} />

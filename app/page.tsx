@@ -4,7 +4,6 @@ import { RecipeList } from "@/components/recipe-list"
 import { CategoryFilter } from "@/components/category-filter"
 import { SearchBar } from "@/components/search-bar"
 import { HeroSection } from "@/components/hero-section"
-import { FeaturedRecipe } from "@/components/featured-recipe"
 import { RecipeCardSkeleton } from "@/components/loading/recipe-card-skeleton"
 import { SearchResults } from "@/components/search-results"
 
@@ -23,12 +22,6 @@ async function RecipesContent({ searchParams }: HomePageProps) {
 
   // קבלת המתכונים עם סינון לפי קטגוריה וחיפוש
   const recipes = await getRecipes(category, search)
-
-  // בחירת מתכון מומלץ (הראשון ברשימה או אקראי)
-  const featuredRecipe = recipes.length > 0 && !search && !category ? recipes[0] : null
-
-  // שאר המתכונים (ללא המתכון המומלץ)
-  const otherRecipes = featuredRecipe ? recipes.slice(1) : recipes
 
   return (
     <>
@@ -49,15 +42,8 @@ async function RecipesContent({ searchParams }: HomePageProps) {
           <CategoryFilter categories={categories} activeCategory={category || "all"} />
         </div>
 
-        {/* מתכון מומלץ */}
-        {featuredRecipe && (
-          <div className="mb-8">
-            <FeaturedRecipe recipe={featuredRecipe} />
-          </div>
-        )}
-
         {/* תוצאות חיפוש או רשימת המתכונים */}
-        {search ? <SearchResults recipes={otherRecipes} searchQuery={search} /> : <RecipeList recipes={otherRecipes} />}
+        {search ? <SearchResults recipes={recipes} searchQuery={search} /> : <RecipeList recipes={recipes} />}
       </section>
     </>
   )
@@ -79,7 +65,7 @@ function RecipesSkeleton() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
         {Array.from({ length: 6 }).map((_, i) => (
           <RecipeCardSkeleton key={i} />
         ))}
