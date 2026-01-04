@@ -102,6 +102,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <meta name="google-site-verification" content="pjjSXEV0iS_gVglOvUuRd06ONgBw5BQJcL_l4duuT6Y" />
       </head>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="light">
